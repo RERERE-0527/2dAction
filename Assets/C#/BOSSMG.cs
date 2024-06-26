@@ -7,7 +7,10 @@ public class BOSSMG : MonoBehaviour
     [SerializeField] private int HP = 10;
     private SpriteRenderer renderer;
     [SerializeField] GameObject PL;
-    [SerializeField] GameObject kabe;
+
+    [SerializeField] BoxCollider2D BoxCollider2D;
+    [SerializeField] BoxCollider2D BoxCollider2D2;
+    //[SerializeField] GameObject kabe;
     //Vector3 PLpos;
     float time;
     Vector2 _PLpos;
@@ -16,27 +19,25 @@ public class BOSSMG : MonoBehaviour
     BossTrigger BossTrigger;
     float startTime;
 
-    Vector2 _Pos;
-
     void Start()
     {
         renderer = GetComponent<SpriteRenderer>();
         GameObject Bosstrigger = GameObject.Find("Bosstrigger");
         BossTrigger = Bosstrigger.GetComponent<BossTrigger>();
         rb = GetComponent<Rigidbody2D>();
-        _Pos = transform.position;
-
-
+        time = 2;
+        BoxCollider2D.enabled = true;
+        BoxCollider2D2.enabled = true;
     }
 
     private void Update()
     {
         _PLpos = PL.transform.position;
-        _Pos = transform.position;
 
         if (BossTrigger._Bosstrigger == true)
         {
             BossMove();
+
         }
 
 
@@ -65,26 +66,32 @@ public class BOSSMG : MonoBehaviour
     {
         HP--;
         Debug.Log(HP);
-        if (HP < 0)
+        if (HP < 1)
         {
             rb.AddTorque(300);
-            SceneManager.LoadScene("ResultScene");
-            Destroy(gameObject);
-
+            StartCoroutine(Destoloy());
         }
     }
-
+    private IEnumerator Destoloy()
+    {
+        BoxCollider2D.enabled = false;
+        BoxCollider2D2.enabled = false;
+        renderer.material.color = Color.blue;
+        yield return new WaitForSeconds(1);
+        
+        SceneManager.LoadScene("ResultScene");
+        
+    }
     //ˆÚ“®ˆ—
     private void BossMove()
     {
         time += Time.deltaTime;
 
-        if (time > 3)
+        if (time > 3 && !(HP < 1))
         {
-            //Debug.Log("A");
+            Debug.Log("A");
 
-
-            _Pos = Vector2.Lerp(new Vector2(1, 1), new Vector2(1, 10), Time.deltaTime);
+            transform.position = new Vector2(_PLpos.x, 25);
             time = 0;
         }
     }
