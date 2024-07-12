@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class enemy1 : MonoBehaviour
@@ -10,6 +11,8 @@ public class enemy1 : MonoBehaviour
 
     [SerializeField] BoxCollider2D BoxCollider2D;
     [SerializeField] BoxCollider2D BoxCollider2D2;
+
+    [SerializeField] AudioClip yarareta;
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +39,7 @@ public class enemy1 : MonoBehaviour
         //衝突したオブジェクトにGroundというタグがついていた時に発動
         if (collisionData.gameObject.CompareTag("Ground"))
         {
+            
             //上方向に力を加える
             rb.AddForce(Vector2.up * jumpStrength, ForceMode2D.Impulse);
         }
@@ -51,6 +55,7 @@ public class enemy1 : MonoBehaviour
             rb.AddTorque(500);
             BoxCollider2D.enabled = false;
             BoxCollider2D2.enabled = false;
+            AudioSource.PlayClipAtPoint(yarareta, transform.position);
         }
     }
 

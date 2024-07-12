@@ -15,12 +15,12 @@ public class PleyerMG : MonoBehaviour
     float _maxHP;//プレイヤーのHP上限
     Image HPBar;//HPbarの画像を格納する箱
 
-    float _x;
+    float _x;//接触したのが壁か地面か判定するために使うやつ
     float _wallTouch;
 
-    public Vector3 _scale;//transformの
+    public Vector3 _scale;//
 
-    [SerializeField] float _maxSpeed = 10.0f;
+    [SerializeField] float _maxSpeed = 10.0f;//速度上限設定
     float horizontal;
 
     // Start is called before the first frame update
@@ -34,17 +34,21 @@ public class PleyerMG : MonoBehaviour
 
     void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
-        _scale = transform.localScale;
+        horizontal = Input.GetAxisRaw("Horizontal");//左右入力検知
+        _scale = transform.localScale;//オブジェクトのscaleを格納
         _x = Input.GetAxisRaw("Horizontal");//平行入力検知
         float y = Input.GetAxis("Vertical");//上下入力検知
+        Debug.Log(_canJump);
 
-        if (_canJump && Input.GetKeyDown(KeyCode.W))//canJumpがturuかつ(W)が押されたとき
+
+        //canJumpがturuかつ(W)または(Space)が押されたときジャンプ
+        if (_canJump && (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.Space)))
         {
             rb.AddForce(Vector2.up * _jumpStrength, ForceMode2D.Impulse);//上方向に移動値を加算
-            _canJump = !_checkGround;//なんか着地検知につかうやつ？
+            _canJump = false;//なんか着地検知につかうやつ？
         }
 
+       　//向きによってオブジェクトの見た目を変更
         if (_x == 1)
         {
             _scale.x = 0.5f;
@@ -54,32 +58,32 @@ public class PleyerMG : MonoBehaviour
             _scale.x = -0.5f;
         }
 
+        //scaleの変更を適用
         transform.localScale = _scale;
+
+        //HPが0になったらゲームオーバーシーンに移動
         if (_hp <= 0)
         {
             SceneManager.LoadScene("GameOverScene");
         }
     }
+
+    //移動の計算
     private void FixedUpdate()
     {
-        //rb.velocity = new Vector2(speed * _x, rb.velocity.y);
 
-        //if (rb.velocity.x > _maxSpeed && 0 < _x)
-        //{
-        //    rb.velocity = new Vector2(_maxSpeed, rb.velocity.y);
-
-        //}
-        //else if (rb.velocity.x < _maxSpeed * -1 && _x < 0)
-        //{
-        //    rb.velocity = new Vector2(_maxSpeed * -1, rb.velocity.y);
-
-        //}
         if (_wallTouch == 0 || _wallTouch == horizontal)
         {
             rb.velocity = new Vector2(horizontal * _speed, rb.velocity.y);
         }
+        else
+        {
+            rb.velocity = new Vector2(0,rb.velocity.y);
+        }
 
     }
+
+    //接触したときのダメージ判定
     private void OnTriggerEnter2D(Collider2D collisionData)
     {
         if (collisionData.gameObject.CompareTag("Enemy"))//接触したオブジェクトのタグが"Enemy"なら
@@ -88,14 +92,18 @@ public class PleyerMG : MonoBehaviour
             HPBar.fillAmount = _hp / _maxHP;//HPbarをHP/MaxHPに大きさを変更
         }
     }
+
+    //接触したオブジェクトが地面か判定しジャンプ可能にする。
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (_checkGround && collision.gameObject.CompareTag("Ground"))//チェックgroundがどうにかなってるかつ接触したオブジェクトタグがgroundならば
-        {      
+        if (collision.gameObject.CompareTag("Ground"))//チェックgroundがどうにかなってるかつ接触したオブジェクトタグがgroundならば
+        {
             _canJump = true;//canJumpをtrueにする。
         }
-        
+
     }
+
+    //接触したコライダーに対する法線ベクトルを取得し壁かどうか判定
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (Mathf.Abs(collision.contacts[0].normal.x) > 0.8f)

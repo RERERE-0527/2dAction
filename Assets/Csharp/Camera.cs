@@ -9,6 +9,8 @@ public class Camera : MonoBehaviour
     private Vector3 velocity = Vector3.zero;  // カメラ移動時の速度ベクトル
     // プレイヤー移動後にカメラ移動をさせたいので、LateUpdateを使う
     Vector3 _PLpos;
+
+ 
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +20,7 @@ public class Camera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
         _PLpos = _PL.transform.position;
     }
     void LateUpdate()
