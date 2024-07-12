@@ -15,6 +15,8 @@ public class enemy3 : MonoBehaviour
     [SerializeField] BoxCollider2D BoxCollider2D2;
 
     private Rigidbody2D rb;
+
+    [SerializeField] AudioClip yarareta;
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +52,7 @@ public class enemy3 : MonoBehaviour
             rb.AddTorque(500);
             BoxCollider2D.enabled = false;
             BoxCollider2D2.enabled = false;
+            AudioSource.PlayClipAtPoint(yarareta, transform.position);
         }
     }
 }

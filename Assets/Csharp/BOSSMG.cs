@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class BOSSMG : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class BOSSMG : MonoBehaviour
 
     BossTrigger BossTrigger;
     float startTime;
+
+    [SerializeField] AudioClip yarareta;
+    [SerializeField] AudioClip damageSound;
 
     void Start()
     {
@@ -70,6 +74,11 @@ public class BOSSMG : MonoBehaviour
         {
             rb.AddTorque(300);
             StartCoroutine(Destoloy());
+            AudioSource.PlayClipAtPoint(yarareta, transform.position);
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(damageSound, transform.position);
         }
     }
     private IEnumerator Destoloy()
@@ -91,7 +100,7 @@ public class BOSSMG : MonoBehaviour
         {
             Debug.Log("A");
 
-            transform.position = new Vector2(_PLpos.x, 25);
+            transform.DOMove(new Vector2(_PLpos.x, 25),0.2f);
             time = 0;
         }
     }
